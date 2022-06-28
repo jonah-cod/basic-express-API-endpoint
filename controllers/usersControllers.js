@@ -1,18 +1,29 @@
 const data  = require('../MOCK_DATA.json')
+const mssql = require('mssql')
+const sqlConfig = require('../config/config');
+const { user } = require('../config/config');
+const poolPromise = require('../config/poolPromise')
 
 module.exports = {
     home: (req, res)=>res.send('It feels good to be 127.0.0.1'),
 
     //get all users
     
-    getUsers: (req, res)=>{
+    getUsers: async(req, res)=>{
+            let pool = await poolPromise()
+            pool.query(`select * FROM usersData`).then(results=>{
+                console.log(results.recordset)
+                res.json({
+                    status:200,
+                    success: true,
+                    message: "success",
+                    results:results.recordset})
+            }
 
+            )
+        
 
-        res.json({
-            status:200,
-            success: true,
-            message: "success",
-            results:data})
+        
     },
 
     //get user by email
@@ -53,5 +64,16 @@ module.exports = {
         
     },
 
-    
+    create: async(req, res)=>{
+        let {id, first_name, last_name, email, gender, Password} = req.body
+            let pool = await poolPromise()
+            pool.query(`insert into usersData 
+                        VALUES('${id}', '${first_name}', '${last_name}', '${email}', '${gender}', '${Password}')`)
+                        .then(results=>{
+                            if(results.rowsAffected){
+                                res.send("user added")
+                                console.log("user added")
+                            }})
+              
+        }   
 }
