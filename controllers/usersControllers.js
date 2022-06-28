@@ -1,11 +1,13 @@
 const data  = require('../MOCK_DATA.json')
 
-
 module.exports = {
     home: (req, res)=>res.send('It feels good to be 127.0.0.1'),
 
     //get all users
+    
     getUsers: (req, res)=>{
+
+
         res.json({
             status:200,
             success: true,
